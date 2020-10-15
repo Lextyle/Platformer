@@ -57,12 +57,16 @@ class Player():
 		for platform in platforms:
 			if collide_rect(self, platform):
 				if self.y_vel > 0:
+					difference = self.rect.bottom - platform.rect.top
+					for platform in platforms:
+						platform.rect.y += difference
 					self.on_ground = True
 					self.jump_count = 0
 				if self.y_vel < 0:
+					difference = platform.rect.bottom - self.rect.top
+					for platform in platforms:
+						platform.rect.y -= difference
 					self.y_vel = 0
-				for platform in platforms:
-					platform.rect.y += self.scroll[1]
 				self.scroll[1] = 0
 				break
 	def draw(self, window):

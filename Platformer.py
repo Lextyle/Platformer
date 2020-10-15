@@ -71,7 +71,6 @@ for line in level_1:
 		x += platform.image.get_width()
 	y += platform.image.get_height()
 clock = pygame.time.Clock()
-all_versions_of_level = [platforms]
 create_block = break_block = False
 block_cell_side = 40
 dirt_cell = pygame.Surface((block_cell_side, block_cell_side))
@@ -106,10 +105,6 @@ while True:
 				left = False
 			if event.key == pygame.K_SPACE:
 				up = True
-			if event.key == pygame.K_z and not (create_block or break_block):
-				if len(all_versions_of_level) > 1:
-					platforms = all_versions_of_level[-1]
-					all_versions_of_level.pop(-1)
 			if not (dirt_cell_activated) and event.key == pygame.K_1:
 				dirt_cell_activated = True
 				grass_cell_activated = False
@@ -136,10 +131,8 @@ while True:
 		if event.type == pygame.MOUSEBUTTONDOWN:
 			if not(mouse_pos_x in range(dirt_cell_pos[0], dirt_cell_pos[0] + block_cell_side * num_of_blocks)) or not(mouse_pos_y in range(dirt_cell_pos[1], dirt_cell_pos[1] + dirt_cell.get_height())):
 				if event.button == 1:
-					all_versions_of_level.append(platforms.copy())
 					create_block = True
 				if event.button == 3:
-					all_versions_of_level.append(platforms.copy())
 					break_block = True
 		if event.type == pygame.MOUSEBUTTONUP:
 			if event.button != 2:
