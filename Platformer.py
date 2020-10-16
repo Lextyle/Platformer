@@ -113,16 +113,6 @@ while True:
 				dirt_cell_activated = False
 				grass_cell_activated = True
 				button_press_sound.play()
-		if event.type == pygame.MOUSEBUTTONDOWN:
-			if event.button == 1:
-				if not (dirt_cell_activated) and mouse_pos_x in range(dirt_cell_pos[0], dirt_cell_pos[0] + dirt_cell.get_width()) and mouse_pos_y in range(dirt_cell_pos[1], dirt_cell_pos[1] + dirt_cell.get_height()):
-					dirt_cell_activated = True
-					grass_cell_activated = False
-					button_press_sound.play()
-				if not (grass_cell_activated) and mouse_pos_x in range(grass_cell_pos[0], grass_cell_pos[0] + grass_cell.get_width()) and mouse_pos_y in range(grass_cell_pos[1], grass_cell_pos[1] + grass_cell.get_height()):
-					dirt_cell_activated = False
-					grass_cell_activated = True
-					button_press_sound.play()
 		if event.type == pygame.KEYUP:
 			if event.key == pygame.K_a:
 				left = False
@@ -134,6 +124,15 @@ while True:
 					create_block = True
 				if event.button == 3:
 					break_block = True
+			elif event.button == 1:
+				if not (dirt_cell_activated) and mouse_pos_x in range(dirt_cell_pos[0], dirt_cell_pos[0] + dirt_cell.get_width()) and mouse_pos_y in range(dirt_cell_pos[1], dirt_cell_pos[1] + dirt_cell.get_height()):
+					dirt_cell_activated = True
+					grass_cell_activated = False
+					button_press_sound.play()
+				if not (grass_cell_activated) and mouse_pos_x in range(grass_cell_pos[0], grass_cell_pos[0] + grass_cell.get_width()) and mouse_pos_y in range(grass_cell_pos[1], grass_cell_pos[1] + grass_cell.get_height()):
+					dirt_cell_activated = False
+					grass_cell_activated = True
+					button_press_sound.play()
 		if event.type == pygame.MOUSEBUTTONUP:
 			if event.button == 1 or event.button == 3:
 				create_block = break_block = False
