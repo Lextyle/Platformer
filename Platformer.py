@@ -135,33 +135,33 @@ while True:
 				if event.button == 3:
 					break_block = True
 		if event.type == pygame.MOUSEBUTTONUP:
-			if event.button != 2:
+			if event.button == 1 or event.button == 3:
 				create_block = break_block = False
-		if create_block:
-			x = mouse_pos_x - ((mouse_pos_x + platforms[0].rect.x * -1) % platforms[0].rect.width)
-			y = mouse_pos_y - ((mouse_pos_y + platforms[0].rect.y * -1) % platforms[0].rect.height)
-			platform = Platform(x, y)
-			if grass_cell_activated:
-				platform.image = pygame.transform.scale(pygame.image.load("grass.png"), (40, 40))
-			is_platform_in_platforms = False
-			for platform_2 in platforms:
-				if platform_2.rect.x == x and platform_2.rect.y == y:
-					is_platform_in_platforms = True
-					break
-			if not is_platform_in_platforms:
-				if not (player.rect.x in range((platform.rect.x + 1) - player.image.get_width(), platform.rect.x - 1 + platform.image.get_width())) or not (player.rect.y in range((platform.rect.y + 1) - player.image.get_height(), platform.rect.y - 1 + platform.image.get_height())):
-					platforms.append(platform)
-					block_create_sound.play()
-		if break_block:
-			x = mouse_pos_x - ((mouse_pos_x + platforms[0].rect.x * -1) % platforms[0].rect.width)
-			y = mouse_pos_y - ((mouse_pos_y + platforms[0].rect.y * -1) % platforms[0].rect.height)
-			platform = Platform(x, y)
-			for platform_2 in platforms:
-				if platform_2.rect.x == x and platform_2.rect.y == y:
-					platforms.pop(platforms.index(platform_2))
-					block_break_sound.play()
-					boom_animations.append(play_boom_animation(platform_2.rect.x + platform_2.rect.width // 2, platform_2.rect.y + platform_2.rect.height // 2))
-					break
+	if create_block:
+		x = mouse_pos_x - ((mouse_pos_x + platforms[0].rect.x * -1) % platforms[0].rect.width)
+		y = mouse_pos_y - ((mouse_pos_y + platforms[0].rect.y * -1) % platforms[0].rect.height)
+		platform = Platform(x, y)
+		if grass_cell_activated:
+			platform.image = pygame.transform.scale(pygame.image.load("grass.png"), (40, 40))
+		is_platform_in_platforms = False
+		for platform_2 in platforms:
+			if platform_2.rect.x == x and platform_2.rect.y == y:
+				is_platform_in_platforms = True
+				break
+		if not is_platform_in_platforms:
+			if (not player.rect.x in range((platform.rect.x + 1) - player.image.get_width(), platform.rect.x - 1 + platform.image.get_width())) or (not player.rect.y in range((platform.rect.y + 1) - player.image.get_height(), platform.rect.y - 1 + platform.image.get_height())):
+				platforms.append(platform)
+				block_create_sound.play()
+	if break_block:
+		x = mouse_pos_x - ((mouse_pos_x + platforms[0].rect.x * -1) % platforms[0].rect.width)
+		y = mouse_pos_y - ((mouse_pos_y + platforms[0].rect.y * -1) % platforms[0].rect.height)
+		platform = Platform(x, y)
+		for platform_2 in platforms:
+			if platform_2.rect.x == x and platform_2.rect.y == y:
+				platforms.pop(platforms.index(platform_2))
+				block_break_sound.play()
+				boom_animations.append(play_boom_animation(platform_2.rect.x + platform_2.rect.width // 2, platform_2.rect.y + platform_2.rect.height // 2))
+				break
 	player.update(left, right, up, platforms)
 	for platform in platforms:
 		platform.draw(window)
