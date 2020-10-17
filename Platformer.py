@@ -8,14 +8,15 @@ try:
 except:
 	from os import system
 	system("pip install pyautogui")
-class play_boom_animation():
-	def __init__(self, x, y):
-		self.animation = [pygame.image.load(r"boom_animation\1_frame.png"), pygame.image.load(r"boom_animation\2_frame.png"), pygame.image.load(r"boom_animation\3_frame.png"), pygame.image.load(r"boom_animation\4_frame.png"), pygame.image.load(r"boom_animation\5_frame.png")]
+class play_animation():
+	def __init__(self, x, y, animation):
+		self.animation = animation
 		self.anim_count = 0
 		self.x = x
 		self.y = y
+		self.frame_length = 2
 	def draw(self, window):
-		self.frame = self.animation[self.anim_count // 2]
+		self.frame = self.animation[self.anim_count // self.frame_length]
 		window.blit(self.frame, (self.x - self.frame.get_width() // 2, self.y - self.frame.get_height() // 2))
 		self.anim_count += 1
 from Player import *
@@ -87,7 +88,8 @@ grass_cell.set_alpha(60)
 dirt_small_image = pygame.transform.scale(pygame.image.load("dirt.png"), (block_cell_side // 2, block_cell_side // 2))
 grass_small_image = pygame.transform.scale(pygame.image.load("grass.png"), (block_cell_side // 2, block_cell_side // 2))
 button_press_sound = pygame.mixer.Sound("button_pressed.wav")
-boom_animations = []
+animations = []
+boom_animation = [pygame.transform.scale(pygame.image.load(r"boom_animation\1_frame.png"), (40, 40)), pygame.transform.scale(pygame.image.load(r"boom_animation\2_frame.png"), (40, 40)), pygame.transform.scale(pygame.image.load(r"boom_animation\3_frame.png"), (40, 40)), pygame.transform.scale(pygame.image.load(r"boom_animation\4_frame.png"), (40, 40)), pygame.transform.scale(pygame.image.load(r"boom_animation\5_frame.png"), (40, 40)), pygame.transform.scale(pygame.image.load(r"boom_animation\6_frame.png"), (40, 40)), pygame.transform.scale(pygame.image.load(r"boom_animation\7_frame.png"), (40, 40)), pygame.transform.scale(pygame.image.load(r"boom_animation\8_frame.png"), (40, 40)), pygame.transform.scale(pygame.image.load(r"boom_animation\9_frame.png"), (40, 40)), pygame.transform.scale(pygame.image.load(r"boom_animation\10_frame.png"), (40, 40)), pygame.transform.scale(pygame.image.load(r"boom_animation\11_frame.png"), (40, 40)), pygame.transform.scale(pygame.image.load(r"boom_animation\12_frame.png"), (40, 40)), pygame.transform.scale(pygame.image.load(r"boom_animation\13_frame.png"), (40, 40))]
 # GAME LOOP
 while True:
 	clock.tick(60)
@@ -159,16 +161,16 @@ while True:
 			if platform_2.rect.x == x and platform_2.rect.y == y:
 				platforms.pop(platforms.index(platform_2))
 				block_break_sound.play()
-				boom_animations.append(play_boom_animation(platform_2.rect.x + platform_2.rect.width // 2, platform_2.rect.y + platform_2.rect.height // 2))
+				animations.append(play_animation(platform_2.rect.x + platform_2.rect.width // 2, platform_2.rect.y + platform_2.rect.height // 2, boom_animation))
 				break
-	player.update(left, right, up, platforms)
+	player.update(left, right, up, platforms, animations)
 	for platform in platforms:
 		platform.draw(window)
-	for boom_animation in boom_animations:
-		if boom_animation.anim_count == len(boom_animation.animation) * 2:
-			boom_animations.pop(boom_animations.index(boom_animation))
+	for animation in animations:
+		if animation.anim_count == len(animation.animation) * animation.frame_length:
+			animations.pop(animations.index(animation))
 			continue
-		boom_animation.draw(window)
+		animation.draw(window)
 	player.draw(window)
 	window.blit(dirt_small_image, ((dirt_cell_pos[0] + dirt_cell.get_width() // 2) - dirt_small_image.get_width() // 2, (dirt_cell_pos[1] + dirt_cell.get_height() // 2) - dirt_small_image.get_height() // 2))
 	window.blit(grass_small_image, ((grass_cell_pos[0] + grass_cell.get_width() // 2) - grass_small_image.get_width() // 2, (grass_cell_pos[1] + grass_cell.get_height() // 2)  - grass_small_image.get_height() // 2))

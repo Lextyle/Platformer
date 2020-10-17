@@ -19,7 +19,7 @@ class Player():
 		self.jump_sound = mixer.Sound("jump.wav")
 		self.jump_count = 0
 		self.scroll = [0, 0]
-	def update(self, left, right, up, platforms):
+	def update(self, left, right, up, platforms, animations):
 		if left:
 			self.image = flip_image(scale_image(load_image(r"player.png"), (self.rect.width, self.rect.height)), 1, 0)
 			self.x_vel -= MOVE_SPEED
@@ -41,31 +41,41 @@ class Player():
 		self.on_ground = False
 		self.scroll[0] = self.x_vel // 3
 		self.scroll[1] = self.y_vel // 3
-		self.move(platforms)
-	def move(self, platforms):
+		self.move(platforms, animations)
+	def move(self, platforms, animations):
 		for platform in platforms:
 			platform.rect.x -= self.scroll[0]
+		for animation in animations:
+			animation.x -= self.scroll[0]
 		for platform in platforms:
 			if collide_rect(self, platform):
 				for platform in platforms:
 					platform.rect.x += self.scroll[0]
+				for animation in animations:
+					animation.x += self.scroll[0]
 				self.x_vel = 0
 				self.scroll[0] = 0
 				break
 		for platform in platforms:
 			platform.rect.y -= self.scroll[1]
+		for animation in animations:
+			animation.y -= self.scroll[1]
 		for platform in platforms:
 			if collide_rect(self, platform):
 				if self.y_vel > 0:
 					difference = self.rect.bottom - platform.rect.top
 					for platform in platforms:
 						platform.rect.y += difference
+					for animation in animations:
+						animation.y += difference
 					self.on_ground = True
 					self.jump_count = 0
 				if self.y_vel < 0:
 					difference = platform.rect.bottom - self.rect.top
 					for platform in platforms:
 						platform.rect.y -= difference
+					for animation in animations:
+						animations.y += difference
 					self.y_vel = 0
 				self.scroll[1] = 0
 				break
