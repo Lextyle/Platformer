@@ -1,13 +1,5 @@
-try:
-	import pygame
-except:
-	from os import system
-	system("pip install pygame")
-try:
-	import pyautogui
-except:
-	from os import system
-	system("pip install pyautogui")
+import pygame
+import pyautogui
 class play_animation():
 	def __init__(self, x, y, animation):
 		self.animation = animation
