@@ -1,5 +1,7 @@
 import pygame
 import pyautogui
+pygame.mixer.pre_init(44100, -16, 2, 512)
+pygame.init()
 class play_animation():
 	def __init__(self, x, y, animation):
 		self.animation = animation
@@ -13,6 +15,7 @@ class play_animation():
 		self.anim_count += 1
 from Player import *
 from Platforms import *
+from Cells import *
 pygame.init()
 # VARIABLES
 window_width = pyautogui.size()[0]
@@ -65,20 +68,8 @@ for line in level_1:
 	y += platform.image.get_height()
 clock = pygame.time.Clock()
 create_block = break_block = False
-block_cell_side = 40
-dirt_cell = pygame.Surface((block_cell_side, block_cell_side))
-grass_cell = pygame.Surface((block_cell_side, block_cell_side))
-dirt_cell_activated = True
-grass_cell_activated = False
-num_of_blocks = 2
-dirt_cell_pos = (window_width // 2 - (block_cell_side * num_of_blocks) // 2, window_height - 90)
-grass_cell_pos = (dirt_cell_pos[0] + block_cell_side, dirt_cell_pos[1])
-dirt_cell.fill((139,69,19))
-grass_cell.fill((139,69,19))
-dirt_cell.set_alpha(60)
-grass_cell.set_alpha(60)
-dirt_small_image = pygame.transform.scale(pygame.image.load("dirt.png"), (block_cell_side // 2, block_cell_side // 2))
-grass_small_image = pygame.transform.scale(pygame.image.load("grass.png"), (block_cell_side // 2, block_cell_side // 2))
+cells = [Cell(20, 20, 40, 40, pygame.image.load("dirt.png")), Cell(60, 20, 40, 40, pygame.image.load("grass.png"))]
+cells[0].activated = True
 button_press_sound = pygame.mixer.Sound("button_pressed.wav")
 animations = []
 boom_animation = [pygame.transform.scale(pygame.image.load(r"boom_animation\1_frame.png"), (40, 40)), pygame.transform.scale(pygame.image.load(r"boom_animation\2_frame.png"), (40, 40)), pygame.transform.scale(pygame.image.load(r"boom_animation\3_frame.png"), (40, 40)), pygame.transform.scale(pygame.image.load(r"boom_animation\4_frame.png"), (40, 40)), pygame.transform.scale(pygame.image.load(r"boom_animation\5_frame.png"), (40, 40)), pygame.transform.scale(pygame.image.load(r"boom_animation\6_frame.png"), (40, 40)), pygame.transform.scale(pygame.image.load(r"boom_animation\7_frame.png"), (40, 40)), pygame.transform.scale(pygame.image.load(r"boom_animation\8_frame.png"), (40, 40)), pygame.transform.scale(pygame.image.load(r"boom_animation\9_frame.png"), (40, 40)), pygame.transform.scale(pygame.image.load(r"boom_animation\10_frame.png"), (40, 40)), pygame.transform.scale(pygame.image.load(r"boom_animation\11_frame.png"), (40, 40)), pygame.transform.scale(pygame.image.load(r"boom_animation\12_frame.png"), (40, 40)), pygame.transform.scale(pygame.image.load(r"boom_animation\13_frame.png"), (40, 40))]
@@ -99,42 +90,27 @@ while True:
 				left = False
 			if event.key == pygame.K_SPACE:
 				up = True
-			if not (dirt_cell_activated) and event.key == pygame.K_1:
-				dirt_cell_activated = True
-				grass_cell_activated = False
-				button_press_sound.play()
-			if not (grass_cell_activated) and event.key == pygame.K_2:
-				dirt_cell_activated = False
-				grass_cell_activated = True
-				button_press_sound.play()
 		if event.type == pygame.KEYUP:
 			if event.key == pygame.K_a:
 				left = False
 			if event.key == pygame.K_d:
 				right = False
 		if event.type == pygame.MOUSEBUTTONDOWN:
-			if not(mouse_pos_x in range(dirt_cell_pos[0], dirt_cell_pos[0] + block_cell_side * num_of_blocks)) or not(mouse_pos_y in range(dirt_cell_pos[1], dirt_cell_pos[1] + dirt_cell.get_height())):
+			if not(mouse_pos_x in range(20, 20 + 40 * len(cells)) and mouse_pos_y in range(20, 60)):
 				if event.button == 1:
 					create_block = True
 				if event.button == 3:
 					break_block = True
-			elif event.button == 1:
-				if not (dirt_cell_activated) and mouse_pos_x in range(dirt_cell_pos[0], dirt_cell_pos[0] + dirt_cell.get_width()) and mouse_pos_y in range(dirt_cell_pos[1], dirt_cell_pos[1] + dirt_cell.get_height()):
-					dirt_cell_activated = True
-					grass_cell_activated = False
-					button_press_sound.play()
-				if not (grass_cell_activated) and mouse_pos_x in range(grass_cell_pos[0], grass_cell_pos[0] + grass_cell.get_width()) and mouse_pos_y in range(grass_cell_pos[1], grass_cell_pos[1] + grass_cell.get_height()):
-					dirt_cell_activated = False
-					grass_cell_activated = True
-					button_press_sound.play()
 		if event.type == pygame.MOUSEBUTTONUP:
 			if event.button == 1 or event.button == 3:
 				create_block = break_block = False
+		for cell in cells:
+			cell.update(event, cells)
 	if create_block:
 		x = mouse_pos_x - ((mouse_pos_x + platforms[0].rect.x * -1) % platforms[0].rect.width)
 		y = mouse_pos_y - ((mouse_pos_y + platforms[0].rect.y * -1) % platforms[0].rect.height)
 		platform = Platform(x, y)
-		if grass_cell_activated:
+		if cells[1].activated:
 			platform.image = pygame.transform.scale(pygame.image.load("grass.png"), (40, 40))
 		is_platform_in_platforms = False
 		for platform_2 in platforms:
@@ -164,17 +140,7 @@ while True:
 			continue
 		animation.draw(window)
 	player.draw(window)
-	window.blit(dirt_small_image, ((dirt_cell_pos[0] + dirt_cell.get_width() // 2) - dirt_small_image.get_width() // 2, (dirt_cell_pos[1] + dirt_cell.get_height() // 2) - dirt_small_image.get_height() // 2))
-	window.blit(grass_small_image, ((grass_cell_pos[0] + grass_cell.get_width() // 2) - grass_small_image.get_width() // 2, (grass_cell_pos[1] + grass_cell.get_height() // 2)  - grass_small_image.get_height() // 2))
-	window.blit(dirt_cell, dirt_cell_pos)
-	window.blit(grass_cell, grass_cell_pos)
-	if dirt_cell_activated:
-		pygame.draw.rect(window, (0, 0, 0), (dirt_cell_pos[0], dirt_cell_pos[1], block_cell_side, block_cell_side), 2)
-	else:
-		pygame.draw.rect(window, (150, 150, 150), (dirt_cell_pos[0], dirt_cell_pos[1], block_cell_side, block_cell_side), 2)
-	if grass_cell_activated:
-		pygame.draw.rect(window, (0, 0, 0), (grass_cell_pos[0], grass_cell_pos[1], block_cell_side, block_cell_side), 2)
-	else:
-		pygame.draw.rect(window, (150, 150, 150), (grass_cell_pos[0], grass_cell_pos[1], block_cell_side, block_cell_side), 2)
+	for cell in cells:
+		cell.draw(window)
 	pygame.display.update()
 	up = False
