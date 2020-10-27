@@ -4,7 +4,6 @@ from pygame.transform import scale as scale_image
 from pygame import MOUSEBUTTONDOWN
 from pygame.font import Font
 from pygame.mixer import Sound
-#mixer.pre_init(44100, -16, 2, 512)
 button_press_sound = Sound("button_pressed.wav")
 class Cell():
   def __init__(self, x, y, width, height, block_image):

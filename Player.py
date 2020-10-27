@@ -3,7 +3,6 @@ from pygame.transform import scale as scale_image
 from pygame.transform import flip as flip_image
 from pygame.sprite import collide_rect
 from pygame import mixer
-#mixer.pre_init(44100, -16, 2, 512)
 MOVE_SPEED = 1
 JUMP_POWER = 20
 GRAVITY = 0.6
