@@ -142,5 +142,5 @@ while True:
 	player.draw(window)
 	for cell in cells:
 		cell.draw(window)
-	pygame.display.update()
+	pygame.display.flip()
 	up = False
